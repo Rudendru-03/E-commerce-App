@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Node.js dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+models/
+routes/
+
+# Application files (if you don’t want them in the repository)
+index.js
+
+# Package management files
+package-lock.json
+package.json
+
+# System-specific files
+.DS_Store
+Thumbs.db
