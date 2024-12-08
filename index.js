@@ -4,6 +4,10 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/product");
+const beautyRoutes = require("./routes/beauty");
+const clothesRoutes = require("./routes/clothes");
+const footwearRoutes = require("./routes/footwear");
+const electronicsRoutes = require("./routes/electronics");
 
 const app = express();
 
@@ -11,13 +15,12 @@ const app = express();
 app.use(express.json());
 
 // Routes
-app.use("/api/auth", authRoutes); // Mount auth routes under /api/auth
+app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-
-// Test route
-app.get("/", (req, res) => {
-  res.send("Welcome to the E-Commerce API");
-});
+app.use("/api/products", beautyRoutes);
+app.use("/api/products", clothesRoutes);
+app.use("/api/products", footwearRoutes);
+app.use("/api/products", electronicsRoutes);
 
 // Connect to MongoDB
 mongoose
