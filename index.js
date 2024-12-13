@@ -23,34 +23,18 @@ const corsOptions = {
 
 // Middleware
 app.use(cors(corsOptions));
-
-// Custom JSON parsing middleware
-app.use((req, res, next) => {
-  let data = "";
-  req.setEncoding("utf8");
-  req.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  req.on("end", () => {
-    if (data) {
-      try {
-        req.body = JSON.parse(data);
-      } catch (e) {
-        return res.status(400).json({ message: "Invalid JSON" });
-      }
-    }
-    next();
-  });
-});
+app.use(express.json());
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("Welcome to my E-commerce application");
+});
 app.use("/api/auth", authRoutes);
+app.use("/api/products/beauty", beautyRoutes);
+app.use("/api/products/clothes", clothesRoutes);
+app.use("/api/products/footwear", footwearRoutes);
+app.use("/api/products/electronics", electronicsRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/products", beautyRoutes);
-app.use("/api/products", clothesRoutes);
-app.use("/api/products", footwearRoutes);
-app.use("/api/products", electronicsRoutes);
 
 // 404 Not Found middleware
 app.use((req, res, next) => {

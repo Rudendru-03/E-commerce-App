@@ -3,15 +3,14 @@ const footwearController = require("../controllers/footwearController");
 
 const router = express.Router();
 
-// Footwear routes
-router.post("/footwear", footwearController.createFootwear);
-router.get("/footwear", footwearController.getFootwear);
-router.get("/footwear/:id", footwearController.getFootwearById);
+router.post("/", footwearController.createFootwear);
+router.get("/", footwearController.getFootwear);
 router.get(
-  "/footwear/:subCategory/:subSubCategory?",
+  "/category/:subCategory/:subSubCategory?",
   footwearController.getFootwearByCategory
 );
-router.put("/footwear/:id", footwearController.updateFootwear);
-router.delete("/footwear/:id", footwearController.deleteFootwear);
+router.get("/:id", footwearController.getFootwearById);
+router.put("/:id", footwearController.updateFootwear);
+router.delete("/:id", footwearController.deleteFootwear);
 
 module.exports = router;

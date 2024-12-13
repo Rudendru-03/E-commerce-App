@@ -1,8 +1,9 @@
-const footwearService = require("../services/footwearService");
+const Footwear = require("../models/footwear");
 
 exports.createFootwear = async (req, res) => {
   try {
-    const footwear = await footwearService.createFootwear(req.body);
+    const footwear = new Footwear(req.body);
+    await footwear.save();
     res.status(201).json(footwear);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -11,7 +12,7 @@ exports.createFootwear = async (req, res) => {
 
 exports.getFootwear = async (req, res) => {
   try {
-    const footwear = await footwearService.getFootwear(req.query);
+    const footwear = await Footwear.find(req.query);
     res.json(footwear);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -20,7 +21,7 @@ exports.getFootwear = async (req, res) => {
 
 exports.getFootwearById = async (req, res) => {
   try {
-    const footwear = await footwearService.getFootwearById(req.params.id);
+    const footwear = await Footwear.findById(req.params.id);
     if (!footwear) {
       return res.status(404).json({ message: "Footwear not found" });
     }
@@ -33,10 +34,9 @@ exports.getFootwearById = async (req, res) => {
 exports.getFootwearByCategory = async (req, res) => {
   try {
     const { subCategory, subSubCategory } = req.params;
-    const footwear = await footwearService.getFootwearByCategory(
-      subCategory,
-      subSubCategory
-    );
+    let query = { subCategory };
+    if (subSubCategory) query.subSubCategory = subSubCategory;
+    const footwear = await Footwear.find(query);
     res.json(footwear);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -45,10 +45,12 @@ exports.getFootwearByCategory = async (req, res) => {
 
 exports.updateFootwear = async (req, res) => {
   try {
-    const footwear = await footwearService.updateFootwear(
-      req.params.id,
-      req.body
-    );
+    const footwear = await Footwear.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!footwear) {
+      return res.status(404).json({ message: "Footwear not found" });
+    }
     res.json(footwear);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -57,7 +59,10 @@ exports.updateFootwear = async (req, res) => {
 
 exports.deleteFootwear = async (req, res) => {
   try {
-    await footwearService.deleteFootwear(req.params.id);
+    const footwear = await Footwear.findByIdAndDelete(req.params.id);
+    if (!footwear) {
+      return res.status(404).json({ message: "Footwear not found" });
+    }
     res.json({ message: "Footwear deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,8 +1,9 @@
-const beautyService = require("../services/beautyService");
+const Beauty = require("../models/beauty");
 
 exports.createBeauty = async (req, res) => {
   try {
-    const beauty = await beautyService.createBeauty(req.body);
+    const beauty = new Beauty(req.body);
+    await beauty.save();
     res.status(201).json(beauty);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -11,7 +12,7 @@ exports.createBeauty = async (req, res) => {
 
 exports.getBeauty = async (req, res) => {
   try {
-    const beauty = await beautyService.getBeauty(req.query);
+    const beauty = await Beauty.find();
     res.json(beauty);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -20,7 +21,7 @@ exports.getBeauty = async (req, res) => {
 
 exports.getBeautyById = async (req, res) => {
   try {
-    const beauty = await beautyService.getBeautyById(req.params.id);
+    const beauty = await Beauty.findById(req.params.id);
     if (!beauty) {
       return res.status(404).json({ message: "Beauty product not found" });
     }
@@ -33,7 +34,7 @@ exports.getBeautyById = async (req, res) => {
 exports.getBeautyByCategory = async (req, res) => {
   try {
     const { subCategory } = req.params;
-    const beauty = await beautyService.getBeautyByCategory(subCategory);
+    const beauty = await Beauty.find({ subCategory });
     res.json(beauty);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -42,7 +43,12 @@ exports.getBeautyByCategory = async (req, res) => {
 
 exports.updateBeauty = async (req, res) => {
   try {
-    const beauty = await beautyService.updateBeauty(req.params.id, req.body);
+    const beauty = await Beauty.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!beauty) {
+      return res.status(404).json({ message: "Beauty product not found" });
+    }
     res.json(beauty);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -51,7 +57,10 @@ exports.updateBeauty = async (req, res) => {
 
 exports.deleteBeauty = async (req, res) => {
   try {
-    await beautyService.deleteBeauty(req.params.id);
+    const beauty = await Beauty.findByIdAndDelete(req.params.id);
+    if (!beauty) {
+      return res.status(404).json({ message: "Beauty product not found" });
+    }
     res.json({ message: "Beauty product deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,8 +1,9 @@
-const clothesService = require("../services/clothesService");
+const Clothes = require("../models/clothes");
 
 exports.createClothes = async (req, res) => {
   try {
-    const clothes = await clothesService.createClothes(req.body);
+    const clothes = new Clothes(req.body);
+    await clothes.save();
     res.status(201).json(clothes);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -11,7 +12,7 @@ exports.createClothes = async (req, res) => {
 
 exports.getClothes = async (req, res) => {
   try {
-    const clothes = await clothesService.getClothes(req.query);
+    const clothes = await Clothes.find(req.query);
     res.json(clothes);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -20,7 +21,7 @@ exports.getClothes = async (req, res) => {
 
 exports.getClothesById = async (req, res) => {
   try {
-    const clothes = await clothesService.getClothesById(req.params.id);
+    const clothes = await Clothes.findById(req.params.id);
     if (!clothes) {
       return res.status(404).json({ message: "Clothes not found" });
     }
@@ -33,10 +34,9 @@ exports.getClothesById = async (req, res) => {
 exports.getClothesByCategory = async (req, res) => {
   try {
     const { subCategory, subSubCategory } = req.params;
-    const clothes = await clothesService.getClothesByCategory(
-      subCategory,
-      subSubCategory
-    );
+    let query = { subCategory };
+    if (subSubCategory) query.subSubCategory = subSubCategory;
+    const clothes = await Clothes.find(query);
     res.json(clothes);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -45,7 +45,12 @@ exports.getClothesByCategory = async (req, res) => {
 
 exports.updateClothes = async (req, res) => {
   try {
-    const clothes = await clothesService.updateClothes(req.params.id, req.body);
+    const clothes = await Clothes.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!clothes) {
+      return res.status(404).json({ message: "Clothes not found" });
+    }
     res.json(clothes);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -54,7 +59,10 @@ exports.updateClothes = async (req, res) => {
 
 exports.deleteClothes = async (req, res) => {
   try {
-    await clothesService.deleteClothes(req.params.id);
+    const clothes = await Clothes.findByIdAndDelete(req.params.id);
+    if (!clothes) {
+      return res.status(404).json({ message: "Clothes not found" });
+    }
     res.json({ message: "Clothes deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -3,15 +3,14 @@ const electronicsController = require("../controllers/electronicsController");
 
 const router = express.Router();
 
-// Electronics routes
-router.post("/electronics", electronicsController.createElectronics);
-router.get("/electronics", electronicsController.getElectronics);
-router.get("/electronics/:id", electronicsController.getElectronicsById);
+router.post("/", electronicsController.createElectronics);
+router.get("/", electronicsController.getElectronics);
 router.get(
-  "/electronics/:subCategory",
+  "/category/:subCategory",
   electronicsController.getElectronicsByCategory
 );
-router.put("/electronics/:id", electronicsController.updateElectronics);
-router.delete("/electronics/:id", electronicsController.deleteElectronics);
+router.get("/:id", electronicsController.getElectronicsById);
+router.put("/:id", electronicsController.updateElectronics);
+router.delete("/:id", electronicsController.deleteElectronics);
 
 module.exports = router;
